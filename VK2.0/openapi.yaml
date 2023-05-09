@@ -1,0 +1,115 @@
+openapi: 3.0.0
+info:
+  title: Дружеский сервис API
+  description: API для управления дружбой пользователей
+  version: 1.0.0
+
+paths:
+  /users:
+    post:
+      summary: Регистрация нового пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: john_doe
+      responses:
+        '201':
+          description: Пользователь успешно зарегистрирован
+        '400':
+          description: Ошибка при регистрации пользователя
+
+  /users/{user_id}/friend-requests:
+    post:
+      summary: Отправить заявку в друзья
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Идентификатор пользователя, которому отправляется заявка
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                target_user_id:
+                  type: integer
+                  format: int64
+                  example: 2
+      responses:
+        '201':
+          description: Заявка в друзья успешно отправлена
+        '400':
+          description: Ошибка при отправке заявки
+
+    get:
+      summary: Получить список входящих заявок в друзья
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Идентификатор пользователя
+      responses:
+        '200':
+          description: Список входящих заявок успешно получен
+        '404':
+          description: Пользователь не найден
+
+  /users/{user_id}/friend-requests/{friend_request_id}:
+    put:
+      summary: Принять заявку в друзья
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Идентификатор пользователя, у которого есть входящая заявка
+        - in: path
+          name: friend_request_id
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Идентификатор заявки в друзья
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: [accept, reject]
+      responses:
+        '200':
+          description: Заявка в друзья успешно обработана
+        '400':
+          description: Ошибка при обработке заявки
+        '404':
+          description: Пользователь или заявка не найдены
+
+  /users/{user_id}/friends:
+    get:
+      summary: Получить список друзей пользователя
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: integer
